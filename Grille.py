@@ -8,24 +8,8 @@ class Grille:
     def __init__(self, lignes, colonnes):
         self.lignes = lignes
         self.colonnes = colonnes
-        g = [[Cellule(0, 0, 0, 0) for x in range(colonnes)] for y in range(lignes)]
 
-        for i in range(lignes):
-            for j in range(colonnes):
-                if j - 1 >= 0 and i == 0:
-                    g[i][j] = Cellule(0, random.randint(1, 5), random.randint(1, 5),
-                                      random.randint(1, 5))
-                elif i - 1 >= 0 and j == 0:
-                    g[i][j] = Cellule(random.randint(1, 5), 0, random.randint(1, 5),
-                                      random.randint(1, 5))
-                elif i - 1 >= 0 and j - 1 >= 0:
-                    g[i][j] = Cellule(0, 0, random.randint(1, 5),
-                                      random.randint(1, 5))
-                else:
-                    g[i][j] = Cellule(random.randint(1, 5), random.randint(1, 5), random.randint(1, 5),
-                                      random.randint(1, 5))
-
-        self.grille = g
+        self.grille = self.creationGrille()
 
     def getLignes(self):
         return self.lignes
@@ -45,55 +29,44 @@ class Grille:
     def setGrille(self, grille):
         self.grille = grille
 
-    def AfficherGrille(self):
-        compteur = 0
-        fig, axes = plt.subplots(nrows=self.lignes, ncols=self.colonnes)
-        fig.size = (self.lignes, self.colonnes)
-        for row in axes:
-            for ax in row:
-                ax.set_axis_off()
-                x1, y1 = [0, 0], [0, 1]
-                x2, y2 = [0, 1], [1, 1]
-                x3, y3 = [1, 1], [0, 1]
-                x4, y4 = [0, 1], [0, 0]
-                ax.plot(x1, y1, color='aqua',
-                        linewidth=self.grille[compteur // self.colonnes][compteur % self.colonnes].getGauche() * 10)
-                ax.plot(x2, y2, color='aqua',
-                        linewidth=self.grille[compteur // self.colonnes][compteur % self.colonnes].getHaut() * 10)
-                ax.plot(x3, y3, color='aqua',
-                        linewidth=self.grille[compteur // self.colonnes][compteur % self.colonnes].getDroit() * 10)
-                ax.plot(x4, y4, color='aqua',
-                        linewidth=self.grille[compteur // self.colonnes][compteur % self.colonnes].getBas() * 10)
-                compteur += 1
+    def creationGrille(self):
+        # epaisseurs[random.randint(0, 4)
 
-        fig.tight_layout(pad=0)
-        plt.show()
-
-    def __str__(self):
-        s = ""
+        grille = []
+        for i in range(self.lignes):
+            matrice = []
+            for j in range(self.colonnes):
+                matrice.append(Cellule(0, 0, 0, 0))
+            grille.append(matrice)
+        epaisseurs = [5, 10, 15, 20, 25]
         for i in range(self.lignes):
             for j in range(self.colonnes):
-                s += "   " + str(self.grille[i][j].getHaut()) + "\n" + str(
-                    self.grille[i][j].getGauche()) + "      " + str(self.grille[i][j].getDroit()) + "\n" + "   " + str(
-                    self.grille[i][j].getBas()) + "\n"
-        return s
-
-    def parcoursEnProfondeur(self, grille):
-        dictionnaire = {}
-        for i in range(self.lignes):
-            for j in range(self.colonnes):
-                if j - 1 >= 0 and i == 0:
-                    dictionnaire[(i, j)] = [[(i, j + 1), grille[i][j].getDroit()], [(i + 1, j), grille[i][j].getBas()]]
-                elif i - 1 >= 0 and j == 0:
-                    dictionnaire[(i, j)] = [[(i, j - 1), grille[i][j].getGauche()],
-                                            [(i, j + 1), grille[i][j].getDroit()],
-                                            [(i + 1, j), grille[i][j].getBas()]]
-                elif i - 1 >= 0 and j - 1 >= 0:
-                    dictionnaire[(i, j)] = [[(i - 1, j), grille[i][j].getHaut()], [(i, j + 1), grille[i][j].getDroit()],
-                                            [(i + 1, j), grille[i][j].getBas()]]
+                if i == 0:
+                    grille[i][j].setHaut(epaisseurs[random.randint(0, 4)])
                 else:
-                    dictionnaire[(i, j)] = [[(i - 1, j), grille[i][j].getHaut()],
-                                            [(i, j - 1), grille[i][j].getGauche()],
-                                            [(i, j + 1), grille[i][j].getDroit()], [(i + 1, j), grille[i][j].getBas()]]
+                    grille[i][j].setHaut(grille[i - 1][j].getBas())
+                if j == 0:
+                    grille[i][j].setGauche(epaisseurs[random.randint(0, 4)])
+                else:
+                    grille[i][j].setGauche(grille[i][j - 1].getDroit())
 
-        return dictionnaire
+                grille[i][j].setDroit(epaisseurs[random.randint(0, 4)])
+                grille[i][j].setBas(epaisseurs[random.randint(0, 4)])
+                grille[i][j].setCentre(i, j)
+        for i in range(self.lignes):
+            for j in range(self.colonnes):
+                print(grille[i][j])
+        return grille
+
+    def AfficherGrille(self):
+        plt.figure()
+        plt.axis('off')
+        for i in range(self.lignes):
+            for j in range(self.colonnes):
+                plt.plot([j, j + 1], [i, i], color='blue', linewidth=self.grille[i][j].getHaut())
+                plt.plot([j, j + 1], [i + 1, i + 1], color='red', linewidth=self.grille[i][j].getBas())
+                plt.plot([j, j], [i, i + 1], color='yellow', linewidth=self.grille[i][j].getGauche())
+                plt.plot([j + 1, j + 1], [i, i + 1], color='black', linewidth=self.grille[i][j].getDroit())
+                plt.plot([j + 0.5, j + 0.5], [i + 0.5, i + 0.5], 'ro')
+
+        plt.show()
