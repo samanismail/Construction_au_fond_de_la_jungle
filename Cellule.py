@@ -30,10 +30,12 @@ class Cellule:
     def setBas(self, bas):
         self.bas = bas
 
-    def setCentre(self, i,j):
-        self.centre = (i,j)
+    def setCentre(self, i, j):
+        self.centre = (i, j)
+
     def getCentre(self):
         return self.centre
 
     def __str__(self):
-        return "Cellule: " + str(self.centre) + " " + str(self.gauche) + " " + str(self.haut) + " " + str(self.droit) + " " + str(self.bas)
+        return "Cellule: " + str(self.centre) + " " + str(self.gauche) + " " + str(self.haut) + " " + str(
+            self.droit) + " " + str(self.bas)

@@ -37,7 +37,7 @@ class Grille:
             for j in range(self.colonnes):
                 matrice.append(Cellule(0, 0, 0, 0))
             grille.append(matrice)
-        epaisseurs = [5, 10, 15, 20, 25]
+        epaisseurs = [3, 6, 9, 12, 15]
         for i in range(self.lignes):
             for j in range(self.colonnes):
                 if i == 0:
@@ -163,11 +163,11 @@ class Grille:
         return chemin
 
     def afficherChemin(self):
-        plt.axis("off")
+        plt.axis('off')
         plt.title("Grille percéé")
         chemin = self.chemin()
         plt.plot([0, 0], [0.5, 0], color='brown', linewidth=10)
-        plt.plot([self.lignes - 1, self.lignes - 1], [-self.lignes + 1, -self.lignes + 0.5], color='brown',
+        plt.plot([self.colonnes - 1, self.colonnes - 1], [-self.lignes + 1, -self.lignes + 0.5], color='brown',
                  linewidth=10)
         for i in range(len(chemin) - 1):
             plt.plot([chemin[i][1], chemin[i + 1][1]], [-chemin[i][0], -chemin[i + 1][0]], color='brown', linewidth=10)
@@ -213,4 +213,5 @@ class Grille:
 
     def calculCout(self):
         D, P = self.dijkstra_pred()
-        return D[self.lignes * self.colonnes - 1]
+        return D[self.lignes * self.colonnes - 1] + self.grille[0][0].getHaut() + self.grille[self.lignes - 1][
+            self.colonnes - 1].getBas()
